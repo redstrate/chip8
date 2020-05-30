@@ -14,6 +14,8 @@ add_library(imgui
 	src/imgui.cpp
 	src/imstb_rectpack.h
 	src/imstb_textedit.h
-	src/imstb_truetype.h)
+	src/imstb_truetype.h
+    src/imgui_stdlib.cpp
+    include/imgui_stdlib.h)
 target_include_directories(imgui PUBLIC include PRIVATE src)
 target_link_libraries(imgui PUBLIC SDL2::Core glad)

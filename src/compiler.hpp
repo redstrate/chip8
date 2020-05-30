@@ -1,4 +1,6 @@
 #pragma once
 
-void compile();
+#include <string>
+
+void compile(std::string code);
 void load_compiled_rom();

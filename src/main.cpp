@@ -14,6 +14,7 @@
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
+#include "imgui_stdlib.h"
 #include "compiler.hpp"
 
 constexpr std::array<uint8_t, 80> chip8_fontset = {
@@ -250,17 +251,6 @@ int main(int argc, char* argv[]) {
                     ImGui::EndMenu();
                 }
                 
-                if(ImGui::MenuItem("Compile & Run Program")) {
-                    state.reset();
-                    
-                    memcpy(state.memory, chip8_fontset.data(), chip8_fontset.size());
-                    
-                    compile();
-                    load_compiled_rom();
-                    
-                    is_rom_open = true;
-                }
-                
                 ImGui::EndMenu();
             }
             
@@ -323,6 +313,33 @@ int main(int argc, char* argv[]) {
             
             ImGui::EndChild();
         }
+        ImGui::End();
+        
+        if(ImGui::Begin("Compiler")) {
+            static std::string test_program =
+                "var count = 3;\n"
+                "label(main);\n"
+                "count += 3;\n"
+                "draw_char(0, 5, count);\n"
+                "jump(main);";
+
+            ImGui::InputTextMultiline("Code", &test_program);
+            
+            if(ImGui::MenuItem("Compile")) {
+                state.reset();
+                
+                memcpy(state.memory, chip8_fontset.data(), chip8_fontset.size());
+                
+                compile(test_program);
+            }
+            
+            if(ImGui::MenuItem("Run")) {
+                load_compiled_rom();
+                
+                is_rom_open = true;
+            }
+        }
+        
         ImGui::End();
         
         if(state.draw_dirty) {

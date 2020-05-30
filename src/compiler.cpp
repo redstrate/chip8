@@ -11,14 +11,6 @@
 
 #include "emu.hpp"
 
-// hard-coded :-(
-const std::string test_program =
-    "var count = 3;"
-    "label(main);"
-    "count += 3;"
-    "draw_char(0, 5, count);"
-    "jump(main);";
-
 void set_bit(uint16_t& opcode, int digit, int value) {
     uint16_t mask = 0x0000;
     switch(digit) {
@@ -159,20 +151,22 @@ std::map<std::string, int> get_arguments(std::vector<std::string> args, std::vec
     return real_args;
 }
 
-void compile() {
+void compile(std::string code) {
     int current_offset = 0;
     int next_instruction = 0;
     
     std::map<std::string, int> function_map;
     bool needs_to_store_next_function = false;
     std::string next_function_to_store;
+    
+    code.erase(std::remove(code.begin(), code.end(), '\n'), code.end());
         
     while(true) {
-        next_instruction = test_program.find_first_of(';', current_offset + 1);
+        next_instruction = code.find_first_of(';', current_offset + 1);
         if(next_instruction == -1)
             break;
         
-        auto instruction = test_program.substr(current_offset == 0 ? current_offset : current_offset + 1, current_offset == 0 ? (next_instruction - current_offset) : (next_instruction - current_offset) - 1);
+        auto instruction = code.substr(current_offset == 0 ? current_offset : current_offset + 1, current_offset == 0 ? (next_instruction - current_offset) : (next_instruction - current_offset) - 1);
                 
         if(needs_to_store_next_function) {
             int offset = (int)opcodes.size() + variable_data.size() + program_begin;
